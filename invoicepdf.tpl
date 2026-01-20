@@ -104,6 +104,13 @@ if ($customfields) {
 }
 $pdf->Ln(10);
 
+# QR Code
+if (!empty($invoiceQrHtml)) {
+    $pdf->SetXY(15, $pdf->GetY() - 40);
+    $pdf->writeHTML($invoiceQrHtml, true, false, false, false, '');
+    $pdf->Ln(5);
+}
+
 # Invoice Items
 $tblhtml = '<table width="100%" bgcolor="#ccc" cellspacing="1" cellpadding="2" border="0">
     <tr height="30" bgcolor="#efefef" style="font-weight:bold;text-align:center;">

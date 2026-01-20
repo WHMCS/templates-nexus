@@ -130,6 +130,42 @@
                     </div>
                 {/if}
             </div>
+
+            {if $configurationFields && count($configurationFields) > 0}
+                <div class="card">
+                    <div class="card-body">
+                        {foreach $configurationFields as $field}
+                            {if $field.type != 'domain'}
+                            <div class="form-group mb-3">
+                                <label for="config_{$field.name}" class="form-label">
+                                    {$field.label}
+                                    {if $field.required}<span class="text-danger">*</span>{/if}
+                                </label>
+
+                                {if $field.type == 'select'}
+                                    {include file="$template/store/config-fields/select.tpl" field=$field}
+                                {elseif $field.type == 'textarea'}
+                                    {include file="$template/store/config-fields/textarea.tpl" field=$field}
+                                {elseif $field.type == 'boolean'}
+                                    {include file="$template/store/config-fields/boolean.tpl" field=$field}
+                                {else}
+                                    {include file="$template/store/config-fields/input.tpl" field=$field}
+                                {/if}
+
+                                {if $configFieldErrors && $configFieldErrors[$field.name]}
+                                    <div class="alert alert-danger mt-1">
+                                        {foreach $configFieldErrors[$field.name] as $error}
+                                            {$error}<br>
+                                        {/foreach}
+                                    </div>
+                                {/if}
+                            </div>
+                            {/if}
+                        {/foreach}
+                    </div>
+                </div>
+            {/if}
+
             <div class="row">
                 <div class="col-sm-5">
                      <a href="javascript:history.go(-1)" class="btn btn-default">

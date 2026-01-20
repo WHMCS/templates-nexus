@@ -5,7 +5,10 @@
  * https://www.whmcs.com/license/
  */
 
-@import "variables";
 @import "../../../node_modules/bootstrap-four/scss/bootstrap";
 @import "buttons";
 @import "view-invoice";
+
+html, body {
+  background: var(--bg-muted);
+}
