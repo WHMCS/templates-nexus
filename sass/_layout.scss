@@ -3,7 +3,11 @@
 }
 
 #nav {
-    gap: 40px;
+    gap: 4px;
+
+    @include media-breakpoint-up(sm) {
+        gap: 40px;
+    }
 }
 
 header.header {
@@ -116,6 +120,7 @@ header.header {
 
     .main-navbar-wrapper {
         padding: 0;
+        min-height: 0;
     }
 
     .navbar {
@@ -129,6 +134,11 @@ header.header {
         }
     }
 
+    .navbar .container:has(.navbar-collapse) {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
     .navbar a {
         color: #444;
     }
@@ -136,8 +146,8 @@ header.header {
     .navbar-nav {
         display: flex;
         gap: 4px;
-        margin-top: 8px;
-        margin-bottom: 20px;
+        margin-top: 4px;
+        margin-bottom: 8px;
     }
 
     .navbar-nav a {
@@ -218,6 +228,10 @@ footer.footer {
     background-color: var(--bg-inverted);
     color: #fff;
     font-size: 0.9rem;
+
+    .nav {
+        gap: 16px;
+    }
 
     .nav-link {
         color: #fff;

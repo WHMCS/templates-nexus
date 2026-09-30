@@ -78,7 +78,7 @@
         {/if}
 
         <div class="navbar navbar-light">
-            <div class="container mt-2 mb-2">
+            <div class="container mt-2 mb-2 d-flex justify-content-between align-items-center">
                 <a class="navbar-brand" href="{$WEB_ROOT}/index.php">
                     {if $assetLogoPath}
                         <img src="{$assetLogoPath}" alt="{$companyname}" class="logo-img">

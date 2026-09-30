@@ -5630,8 +5630,7 @@ a.close.disabled {
   float: left;
   width: 100%;
   margin-right: -100%;
-  -webkit-backface-visibility: hidden;
-          backface-visibility: hidden;
+  backface-visibility: hidden;
   transition: transform 0.6s ease-in-out;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -9644,7 +9643,12 @@ body .custom-file-label {
 }
 
 #nav {
-  gap: 40px;
+  gap: 4px;
+}
+@media (min-width: 576px) {
+  #nav {
+    gap: 40px;
+  }
 }
 
 header.header {
@@ -9736,6 +9740,7 @@ header.header .search .input-group-prepend .btn {
 }
 header.header .main-navbar-wrapper {
   padding: 0;
+  min-height: 0;
 }
 header.header .navbar {
   padding: 0;
@@ -9746,14 +9751,18 @@ header.header .navbar {
     gap: 8px;
   }
 }
+header.header .navbar .container:has(.navbar-collapse) {
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
 header.header .navbar a {
   color: #444;
 }
 header.header .navbar-nav {
   display: flex;
   gap: 4px;
-  margin-top: 8px;
-  margin-bottom: 20px;
+  margin-top: 4px;
+  margin-bottom: 8px;
 }
 header.header .navbar-nav a {
   font-size: 16px;
@@ -9822,6 +9831,9 @@ footer.footer {
   background-color: var(--bg-inverted);
   color: #fff;
   font-size: 0.9rem;
+}
+footer.footer .nav {
+  gap: 16px;
 }
 footer.footer .nav-link {
   color: #fff;
@@ -13333,6 +13345,7 @@ table.table-list thead th {
   border-bottom: 1px solid #ccc;
   color: #333;
   text-align: center;
+  vertical-align: middle;
 }
 
 table.table-list tbody td {
@@ -13407,6 +13420,9 @@ table.ox-table-accounts .input-group {
   width: 65%;
 }
 
+body .dataTables_wrapper {
+  overflow-x: auto;
+}
 body .dataTables_wrapper table.table-list {
   border-radius: var(--rounding-md);
 }
@@ -13621,7 +13637,8 @@ body #order-standard_cart .cart-sidebar .sidebar-menu-item-badge {
 }
 
 body #order-standard_cart .cart-body {
-  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 body #order-standard_cart .cart-body .header-lined {
   margin-bottom: 16px;
