@@ -338,7 +338,7 @@ jQuery(document).ready(function() {
         jQuery('.login-feedback', form).slideUp();
         WHMCS.http.jqClient.post(
             url,
-            form.serialize(),
+            form.serialize() + '&token=' + csrfToken,
             function (data) {
                 jQuery('.loading', button).hide().end().removeAttr('disabled');
                 jQuery('.login-feedback', form).html('');
@@ -412,16 +412,29 @@ jQuery(document).ready(function() {
             .data('targetfields', jQuery(this).data('targetfields'))
             .modal('show');
     });
+    // A refusal must not outlive the value that caused it: clearing the field raises the error,
+    // and without this it stayed on screen while the corrected length was typed underneath it.
+    jQuery('#inputGeneratePasswordLength').on('input', function() {
+        jQuery('#generatePwLengthError').hide();
+    });
     jQuery('#frmGeneratePassword').submit(function(e) {
         e.preventDefault();
-        var length = parseInt(jQuery('#inputGeneratePasswordLength').val(), 10);
+        var lengthField = jQuery('#inputGeneratePasswordLength'),
+            bounds = WHMCS.utils.getPasswordLengthBounds(lengthField),
+            length = parseInt(lengthField.val(), 10);
 
-        // Check length
-        if (length < 12 || length > 64) {
+        // Check length against the bounds the field carries, which the server sets from the
+        // configured minimum password length - not against a floor hardcoded here, which
+        // would let the generator offer a password the policy then rejects.
+        if (isNaN(length)
+            || (bounds.minimum !== null && length < bounds.minimum)
+            || (bounds.maximum !== null && length > bounds.maximum)
+        ) {
             jQuery('#generatePwLengthError').show();
             return;
         }
 
+        jQuery('#generatePwLengthError').hide();
         jQuery('#inputGeneratePasswordOutput').val(WHMCS.utils.generatePassword(length));
     });
     jQuery('#btnGeneratePasswordInsert')
@@ -1478,3 +1491,56 @@ function customActionAjaxCall(event, element) {
     });
     return true;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.js-service-command-form').forEach(form => {
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+
+            form.querySelectorAll('.js-field-error').forEach(el => el.remove());
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const globalContainer = document.getElementById('js-global-command-result');
+                    globalContainer.innerHTML = '';
+
+                    if (!data.success && data.errors) {
+                        Object.entries(data.errors).forEach(([fieldName, messages]) => {
+                            const input = form.querySelector(`[name="config[${fieldName}]"]`);
+                            if (input) {
+                                const errorDiv = document.createElement('div');
+                                errorDiv.classList.add('alert', 'alert-danger', 'mt-1', 'js-field-error');
+                                errorDiv.innerHTML = messages.join('<br>');
+                                input.closest('.form-group')?.appendChild(errorDiv);
+                            }
+                        });
+                    }
+
+                    const alert = document.createElement('div');
+                    alert.classList.add('alert', 'mt-2');
+                    alert.classList.add(data.success ? 'alert-success' : 'alert-danger');
+                    alert.innerText = data.message ?? (data.success ? 'Success' : 'Error');
+
+                    globalContainer.appendChild(alert);
+
+                    setTimeout(() => {
+                        globalContainer.innerHTML = '';
+                    }, 5000);
+                })
+                .catch(() => {
+                    const container = document.getElementById('js-global-command-result');
+                    container.innerHTML = '<div class="alert alert-danger mt-2">The request failed.</div>';
+                    setTimeout(() => {
+                        container.innerHTML = '';
+                    }, 5000);
+                });
+        });
+    });
+});
